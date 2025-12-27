@@ -1,202 +1,28 @@
 {% extends 'base.html' %}
-
-{% block title %}个人资料 - 我的网站{% endblock %}
-
-{% block extra_css %}
-<style>
-/* 容器样式隔离 */
-.profile-container * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Microsoft YaHei', sans-serif;
-}
-
-.profile-container {
-  max-width: 800px;
-  margin: 3rem auto;
-  padding: 0 1rem;
-}
-
-/* 资料卡片 */
-.profile-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 2rem;
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-/* 左侧头像区 */
-.avatar-part {
-  width: 180px;
-  text-align: center;
-}
-
-.avatar-box {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: #f5f5f5;
-  margin: 0 auto 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid #eee;
-  font-size: 40px;
-  color: #666;
-}
-
-.username-text {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.edit-btn {
-  background: #ff6b6b;
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  padding: 8px 20px;
-  cursor: pointer;
-  font-size: 14px;
-  text-decoration: none;
-  display: inline-block;
-}
-
-/* 右侧信息区 */
-.info-part {
-  flex: 1;
-}
-
-.info-list {
-  list-style: none;
-  margin-bottom: 2rem;
-}
-
-.info-list li {
-  display: flex;
-  margin-bottom: 1rem;
-  font-size: 15px;
-}
-
-.info-list li .info-label {
-  width: 80px;
-  color: #888;
-}
-
-.info-list li .info-value {
-  color: #333;
-}
-
-/* 数据统计 */
-.stats-row {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.stats-item {
-  text-align: center;
-}
-
-.stats-item .stats-num {
-  font-size: 22px;
-  font-weight: bold;
-  color: #6c8eff;
-  margin-bottom: 0.3rem;
-}
-
-.stats-item .stats-text {
-  font-size: 14px;
-  color: #888;
-}
-
-/* 操作按钮 */
-.btn-group {
-  display: flex;
-  gap: 1rem;
-}
-
-.action-btn {
-  padding: 10px 24px;
-  border-radius: 24px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.btn-green {
-  background: #4ade80;
-  color: #fff;
-}
-
-.btn-gray {
-  background: #f5f5f5;
-  color: #666;
-}
-</style>
-{% endblock %}
-
+{% block title %}个人资料 - 博客系统{% endblock %}
 {% block content %}
-<div class="profile-container">
-  <div class="profile-card">
-    <!-- 左侧头像区（动态显示昵称） -->
-    <div class="avatar-part">
-      <div class="avatar-box">头</div>
-      <!-- 动态显示用户昵称（优先用nickname，没有则用username） -->
-      <div class="username-text">{{ user.profile.nickname|default:user.username }}</div>
-      <a href="{% url 'account:profile_edit' %}" class="edit-btn">编辑资料</a>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white text-center">
+                <h2>个人资料</h2>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h5>基本信息</h5>
+                    <hr>
+                    <p><strong>用户名：</strong>{{ user.username }}</p>
+                    <p><strong>邮箱：</strong>{{ user.email|default:"未设置" }}</p>
+                    <p><strong>加入时间：</strong>{{ user.date_joined|date:"Y-m-d H:i:s" }}</p>
+                    <p><strong>最后登录：</strong>{{ user.last_login|date:"Y-m-d H:i:s"|default:"从未登录" }}</p>
+                </div>
+                <!-- 后续可扩展修改资料功能 -->
+                <div class="d-flex gap-2">
+                    <a href="{% url 'post:post_list' %}" class="btn btn-secondary">返回首页</a>
+                    <button class="btn btn-warning" disabled>修改资料（待扩展）</button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- 右侧信息区（动态显示用户信息） -->
-    <div class="info-part">
-      <ul class="info-list">
-        <li>
-          <div class="info-label">昵称：</div>
-          <!-- 动态昵称 -->
-	  <div class="info-value">{{ user.profile.nickname|default:user.username }}</div>
-        </li>
-        <li>
-          <div class="info-label">简介：</div>
-          <!-- 动态简介（编辑后自动更新） -->
-	  <div class="info-value">{{ user.profile.bio|default:"暂无简介" }}</div>
-        </li>
-        <li>
-          <div class="info-label">注册时间：</div>
-          <div class="info-value">{{ user.date_joined|date:"Y-m-d" }}</div>
-        </li>
-        <li>
-          <div class="info-label">最后登录：</div>
-          <div class="info-value">{{ user.last_login|date:"Y-m-d H:i" }}</div>
-        </li>
-      </ul>
-
-      <div class="stats-row">
-        <div class="stats-item">
-          <div class="stats-num">{{ user.post_set.count }}</div>
-          <div class="stats-text">发布文章</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-num">0</div>
-          <div class="stats-text">关注</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-num">0</div>
-          <div class="stats-text">粉丝</div>
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <a href="{% url 'post:create' %}" class="action-btn btn-green">发布新文章</a>
-        <a href="{% url 'post:my_posts' %}" class="action-btn btn-gray">我的文章</a>
-        <a href="{% url 'account:profile' %}" class="action-btn btn-gray">个人资料</a>
-      </div>
-    </div>
-  </div>
 </div>
 {% endblock %}

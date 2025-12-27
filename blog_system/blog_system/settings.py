@@ -16,10 +16,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-abc1234567890'  # 开发环境随便填
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # 核心：自定义用户模型（必须放在INSTALLED_APPS前）
-AUTH_USER_MODEL = 'account.User'  # 指定使用account应用的User模型
+AUTH_USER_MODEL = 'account.User'
 
 # 已安装应用
 INSTALLED_APPS = [
@@ -86,7 +86,6 @@ USE_TZ = True
 
 # 静态/媒体文件
 STATIC_URL = 'static/'
-STATIC_ROOT = '/var/www/blog/blog_system/static'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

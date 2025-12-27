@@ -112,74 +112,12 @@ main {
 }
 
 /* 响应式适配 */
-/* ========== 移动端响应式适配（追加到文件末尾） ========== */
-/* 核心：开启视口适配（如果模板里没加，这里加也可以） */
-@media screen and (max-width: 768px) {
-  /* ===== 全局强制适配（核心） ===== */
-  * {
-    box-sizing: border-box !important;
-  }
-  html, body {
-    width: 100% !important;
-    overflow-x: hidden !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+@media (max-width: 768px) {
+    .chat-messages {
+        height: 300px;
+    }
 
-  /* ===== 顶部所有元素强制显示 ===== */
-  /* 匹配所有header/nav容器（不管类名） */
-  header, nav, .header, [class*="nav"], [id*="nav"] {
-    display: flex !important;
-    flex-wrap: wrap !important; /* 自动换行 */
-    justify-content: center !important; /* 居中 */
-    align-items: center !important;
-    width: 100% !important;
-    padding: 10px 5px !important;
-    margin: 0 !important;
-  }
-
-  /* 所有导航链接强制显示 */
-  header a, nav a, .header a, [class*="nav"] a {
-    display: inline-block !important;
-    padding: 6px 10px !important;
-    font-size: 14px !important;
-    color: #333 !important; /* 确保文字可见 */
-    text-decoration: none !important;
-    margin: 2px 3px !important; /* 紧凑排列 */
-    background: #f5f5f5 !important; /* 加背景，方便点击 */
-    border-radius: 4px !important;
-  }
-
-  /* 右上角用户信息/后台按钮 */
-  .user-info, .admin-btn, [class*="user"], [id*="admin"] {
-    display: block !important;
-    width: 100% !important;
-    text-align: center !important;
-    font-size: 13px !important;
-    margin: 5px 0 !important;
-  }
-
-  /* ===== 文章列表强制适配 ===== */
-  /* 匹配所有文章列表容器 */
-  .post-list, .article-list, ul, ol {
-    width: 95% !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
-  }
-  /* 文章项强制单列 */
-  .post-item, .article-item, li {
-    width: 100% !important;
-    padding: 15px !important;
-    margin: 10px 0 !important;
-    list-style: none !important;
-  }
-
-  /* ===== 图片/按钮/输入框 ===== */
-  img { max-width: 100% !important; height: auto !important; }
-  button, input, textarea, .btn {
-    width: 95% !important;
-    margin: 5px auto !important;
-    display: block !important;
-    padding: 10px !important;
-  }
+    .message-item {
+        max-width: 85%;
+    }
 }

@@ -1,92 +1,66 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}我的网站{% endblock %}</title>
-    <!-- Bootstrap样式 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome图标 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
-    {% block extra_css %}{% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}聊天系统{% endblock %}</title>
+  <!-- Bootstrap样式 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome图标 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">我的网站</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'chat:index' %}">聊天</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'post:index' %}">首页</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'post:about' %}">关于</a>
-                    </li>
-                </ul>
-                <div class="navbar-nav">
-                    {% if user.is_authenticated %}
-                        <span class="nav-link disabled">欢迎，{{ user.username }}</span>
-                        <a class="nav-link" href="{% url 'admin:index' %}">后台</a>
-                        <a class="nav-link" href="{% url 'account:logout' %}">退出登录</a>
-                    {% else %}
-                        <a class="nav-link" href="{% url 'account:login' %}">登录</a>
-                        <a class="nav-link" href="{% url 'account:register' %}">注册</a>
-                    {% endif %}
-                </div>
-            </div>
+  <!-- 导航栏 -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">我的网站</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'chat:index' %}">聊天</a>
+          </li>
+          <!-- 补充博客核心导航（可选，适配整体项目） -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'post:index' %}">首页</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'post:about' %}">关于</a>
+          </li>
+        </ul>
+        <div class="navbar-nav">
+          {% if user.is_authenticated %}
+            <span class="nav-link disabled">欢迎, {{ user.username }}</span>
+            <a class="nav-link" href="{% url 'admin:index' %}">后台</a>
+            <!-- 修复：添加account命名空间 -->
+            <a class="nav-link" href="{% url 'account:logout' %}">退出登录</a>
+          {% else %}
+            <!-- 修复：添加account命名空间 -->
+            <a class="nav-link" href="{% url 'account:login' %}">登录</a>
+            <a class="nav-link" href="{% url 'account:register' %}">注册</a>
+          {% endif %}
         </div>
-    </nav>
-
-    <!-- 消息提示 -->
-    {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <!-- 主内容区域（含分类栏+文章列表） -->
-    <div class="container mt-4">
-        <div class="row">
-            <!-- 左侧分类栏 -->
-            <div class="col-md-3">
-                {% with categories=Category.objects.all %}
-                    {% include "post/category_sidebar.html" %}
-                {% endwith %}
-            </div>
-            <!-- 右侧文章列表 -->
-            <div class="col-md-9">
-                {% block content %}{% endblock %}
-            </div>
-        </div>
+      </div>
     </div>
+  </nav>
 
-    <!-- 发布文章按钮（仅登录用户） -->
-    {% if user.is_authenticated %}
-        <div style="text-align: center; margin: 20px 0;">
-            <a href="{% url 'post:post_publish' %}" style="
-                padding: 10px 20px;
-                background: #28a745;
-                color: white;
-                text-decoration: none;
-                border-radius: 4px;
-                font-size: 16px;
-            ">发布新文章</a>
-            <a href="{% url 'post:my_posts' %}" style="margin-left: 10px;">我的文章</a>
-            <a href="{% url 'account:profile' %}" style="margin-left: 10px;">个人资料</a>
+  <!-- 消息提示 -->
+  {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
+  <!-- 内容区域 -->
+  {% block content %}{% endblock %}
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

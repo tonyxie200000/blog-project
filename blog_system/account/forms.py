@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import User, UserProfile
+from .models import User
 
 # 注册表单
 class RegisterForm(UserCreationForm):
@@ -44,8 +44,3 @@ class LoginForm(AuthenticationForm):
             'class': 'form-input'
         })
     )
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ["nickname", "avatar", "bio"]  # 对应模型字段
