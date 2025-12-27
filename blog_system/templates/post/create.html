@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}{% if post %}编辑文章{% else %}发布文章{% endif %}{% endblock %}
+
+{% block content %}
+    <h2 style="margin-bottom: 1.5rem;">{% if post %}编辑文章{% else %}发布文章{% endif %}</h2>
+    
+    <!-- 发布文章表单 -->
+    <form method="post" id="postForm">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.title.label_tag }}
+            {{ form.title.errors }}
+            {{ form.title }}
+        </div>
+        
+        <div class="form-group" style="position: relative;">
+            {{ form.category.label_tag }}
+            {{ form.category.errors }}
+            {{ form.category }}
+            <!-- 新增分类按钮 -->
+            <button type="button" id="addCategoryBtn" class="btn btn-secondary" style="margin-top: 0.5rem;">
+                + 新增分类
+            </button>
+        </div>
+        
+        <div class="form-group">
+            {{ form.content.label_tag }}
+            {{ form.content.errors }}
+            {{ form.content }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.is_published.label_tag }}
+            {{ form.is_published }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+            {% if post %}保存修改{% else %}发布文章{% endif %}
+        </button>
+    </form>
+
+    <!-- 新增分类弹窗（默认隐藏） -->
+    <div id="categoryModal" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center;
+    ">
+        <div style="
+            background: white; padding: 2rem; border-radius: 8px; width: 400px;
+        ">
+            <h3 style="margin-bottom: 1rem;">新增分类</h3>
+            <div class="form-group">
+                <label>分类名称</label>
+                <input type="text" id="categoryName" class="form-input" placeholder="请输入分类名称">
+            </div>
+            <div id="modalMsg" style="margin: 1rem 0; color: red; display: none;"></div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" id="closeModalBtn" class="btn btn-secondary">取消</button>
+                <button type="button" id="submitCategoryBtn" class="btn btn-primary">确认创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AJAX逻辑 -->
+    <script>
+        // 获取DOM元素
+        const addCategoryBtn = document.getElementById('addCategoryBtn');
+        const categoryModal = document.getElementById('categoryModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const submitCategoryBtn = document.getElementById('submitCategoryBtn');
+        const categoryName = document.getElementById('categoryName');
+        const modalMsg = document.getElementById('modalMsg');
+        const categorySelect = document.querySelector('#id_category');
+        // 获取CSRF Token（Django必须）
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // 打开弹窗
+        addCategoryBtn.addEventListener('click', () => {
+            categoryModal.style.display = 'flex';
+            categoryName.value = '';
+            modalMsg.style.display = 'none';
+        });
+
+        // 关闭弹窗
+        closeModalBtn.addEventListener('click', () => {
+            categoryModal.style.display = 'none';
+        });
+
+        // 点击弹窗外层关闭
+        categoryModal.addEventListener('click', (e) => {
+            if (e.target === categoryModal) categoryModal.style.display = 'none';
+        });
+
+        // 提交新增分类
+        submitCategoryBtn.addEventListener('click', async () => {
+            const name = categoryName.value.trim();
+            if (!name) {
+                modalMsg.style.display = 'block';
+                modalMsg.textContent = '分类名称不能为空';
+                return;
+            }
+
+            try {
+                // AJAX请求后端接口
+                const response = await fetch("{% url 'post:category_create' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: `name=${encodeURIComponent(name)}`
+                });
+
+                const res = await response.json();
+                if (res.code === 200) {
+                    // 创建成功：添加到下拉框并选中
+                    const option = document.createElement('option');
+                    option.value = res.data.id;
+                    option.textContent = res.data.name;
+                    option.selected = true;
+                    categorySelect.appendChild(option);
+                    // 关闭弹窗并提示
+                    categoryModal.style.display = 'none';
+                    alert(res.msg);
+                } else {
+                    // 失败提示
+                    modalMsg.style.display = 'block';
+                    modalMsg.textContent = res.msg;
+                }
+            } catch (error) {
+                modalMsg.style.display = 'block';
+                modalMsg.textContent = '网络错误，创建失败';
+                console.error(error);
+            }
+        });
+    </script>
+{% endblock %}

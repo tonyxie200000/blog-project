@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}创建聊天房间{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">创建新聊天房间</h4>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            
+            <!-- 表单字段 -->
+            <div class="mb-3">
+              {{ form.name.label_tag }}
+              {{ form.name }}
+              {% if form.name.errors %}
+                <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              {{ form.description.label_tag }}
+              {{ form.description }}
+              {% if form.description.errors %}
+                <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- 提交按钮 -->
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'chat:index' %}" class="btn btn-secondary">返回列表</a>
+              <button type="submit" class="btn btn-primary">创建房间</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

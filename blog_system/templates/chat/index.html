@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}聊天房间列表{% endblock %}
+{% block extra_css %}
+<style>
+  .room-card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+  }
+  .room-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: #6c757d;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <!-- 标题 + 创建房间按钮 -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>聊天房间</h2>
+    <a href="{% url 'chat:room_create' %}" class="btn btn-primary">
+      <i class="fa fa-plus"></i> 创建新房间
+    </a>
+  </div>
+
+  <!-- 房间列表 -->
+  {% if rooms %}
+    <div class="row">
+      {% for room in rooms %}
+        <div class="col-md-6 col-lg-4 mb-3">
+          <div class="room-card">
+            <h5 class="card-title">{{ room.name }}</h5>
+            {% if room.description %}
+              <p class="text-muted small mb-3">{{ room.description|truncatechars:50 }}</p>
+            {% endif %}
+            <p class="small">
+              <span class="badge bg-secondary">{{ room.participants.count }} 人参与</span>
+              <span class="text-muted ms-2">{{ room.created_at|date:"Y-m-d" }}</span>
+            </p>
+            <a href="{% url 'chat:room' room.id %}" class="btn btn-outline-primary btn-sm">
+              进入房间
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- 空状态 -->
+    <div class="empty-state">
+      <i class="fa fa-comments-o fa-4x mb-3"></i>
+      <h4>暂无聊天房间</h4>
+      <p class="mb-4">点击“创建新房间”开始你的聊天吧～</p>
+      <a href="{% url 'chat:room_create' %}" class="btn btn-primary">创建第一个房间</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

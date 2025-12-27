@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if page_type == 'my' %}我的文章 - 个人博客{% else %}首页 - 个人博客{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* 全局样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 背景渐变 + 装饰 */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+
+/* 容器卡片 */
+.container-wrap {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 装饰元素 */
+.container-wrap::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(45deg, #ff6b6b, #feca57);
+  border-radius: 50%;
+  opacity: 0.2;
+  z-index: 0;
+}
+
+.container-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(45deg, #48dbfb, #0abde3);
+  border-radius: 50%;
+  opacity: 0.2;
+  z-index: 0;
+}
+
+/* 按钮区域样式 */
+.btn-group {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* 主按钮样式 */
+.btn-success {
+  background: linear-gradient(45deg, #2ed573, #10ac84);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 8px 15px rgba(46, 213, 115, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px rgba(46, 213, 115, 0.4);
+  background: linear-gradient(45deg, #10ac84, #0a8e6e);
+}
+
+/* 链接按钮样式 */
+.btn-link {
+  color: #5f27cd;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.btn-link:hover {
+  color: #ff3838;
+  background: rgba(95, 39, 205, 0.05);
+  transform: translateY(-2px);
+}
+
+/* 标题样式 */
+.page-title {
+  position: relative;
+  z-index: 1;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  background: linear-gradient(90deg, #5f27cd, #0abde3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* 文章卡片样式 */
+.article-card {
+  position: relative;
+  z-index: 1;
+  border: none;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+/* 卡片装饰线 */
+.article-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #ff6b6b, #feca57);
+}
+
+.article-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* 文章标题样式 */
+.article-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.article-title a {
+  color: #2d3436;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.article-title a:hover {
+  color: #5f27cd;
+  text-shadow: 0 0 10px rgba(95, 39, 205, 0.2);
+}
+
+/* 文章元信息样式 */
+.article-meta {
+  color: #636e72;
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f2f6;
+}
+
+.article-meta a {
+  color: #0984e3;
+  text-decoration: none;
+}
+
+.article-meta a:hover {
+  color: #6c5ce7;
+}
+
+/* 文章摘要样式 */
+.article-excerpt {
+  color: #2d3436;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  font-size: 16px;
+}
+
+/* 阅读全文按钮 */
+.btn-primary {
+  background: linear-gradient(45deg, #74b9ff, #0984e3);
+  border: none;
+  border-radius: 50px;
+  padding: 8px 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, #0984e3, #076ab4);
+  transform: translateY(-2px);
+}
+
+/* 空数据提示样式 */
+.empty-tip {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 5rem 2rem;
+  color: #636e72;
+}
+
+.empty-tip i {
+  font-size: 6rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, #fd79a8, #e17055);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.empty-tip p {
+  font-size: 18px;
+  margin-bottom: 1rem;
+}
+
+.empty-tip a {
+  color: #5f27cd;
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
+}
+
+.empty-tip a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #5f27cd;
+  transition: width 0.3s ease;
+}
+
+.empty-tip a:hover::after {
+  width: 100%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 外层容器（带渐变背景和装饰） -->
+<div class="container-wrap">
+  <!-- 按钮组（置顶） -->
+  <div class="btn-group">
+    <a href="{% url 'post:create' %}" class="btn btn-success">发布新文章</a>
+    <a href="{% url 'post:my_posts' %}" class="btn btn-link">我的文章</a>
+    <a href="{% url 'account:profile' %}" class="btn btn-link">个人资料</a>
+  </div>
+
+  <!-- 页面标题 -->
+  <h2 class="page-title">
+    {% if page_type == 'my' %}我的文章{% else %}全部文章{% endif %}
+  </h2>
+
+  <!-- 文章列表区域 -->
+  {% if posts and posts.exists %}
+    {% for post in posts %}
+      <div class="article-card">
+        <!-- 文章标题 -->
+        <div class="article-title">
+          <a href="{% url 'post:post_detail' post.pk|default:0 %}">
+            {{ post.title|default:"未命名文章" }}
+          </a>
+        </div>
+
+        <!-- 文章元信息 -->
+        <div class="article-meta">
+          作者：
+          {% if post.author and post.author.username %}
+            <a href="{% url 'account:user_profile' post.author.username %}">
+              {{ post.author.username }}
+            </a>
+          {% else %}
+            匿名作者
+          {% endif %}
+
+          <span class="mx-2">|</span>
+          <span>阅读量：{{ post.views|default:0 }}</span>
+
+          <span class="mx-2">|</span>
+          <span>发布时间：{{ post.created_at|date:"Y-m-d H:i"|default:"未知时间" }}</span>
+
+          {% if post.category and post.category.id %}
+            <span class="mx-2">|</span>
+            <span>分类：
+              <a href="{% url 'post:post_by_category' post.category.id %}">
+                {{ post.category.name|default:"未分类" }}
+              </a>
+            </span>
+          {% endif %}
+        </div>
+
+        <!-- 文章摘要 -->
+        <div class="article-excerpt">
+          {{ post.content|striptags|truncatechars:120|default:"暂无摘要" }}
+        </div>
+
+        <!-- 阅读全文按钮 -->
+        <a href="{% url 'post:post_detail' post.pk|default:0 %}" class="btn btn-primary">
+          阅读全文
+        </a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <!-- 空数据提示 -->
+    <div class="empty-tip">
+      <i class="fa fa-file-text-o"></i>
+      {% if page_type == 'my' %}
+        <p>你还没有发布任何文章</p>
+        <p><a href="{% url 'post:create' %}">立即发布你的第一篇文章吧～</a></p>
+      {% else %}
+        <p>网站暂无任何文章</p>
+        <p><a href="{% url 'post:create' %}">成为第一个发布文章的用户吧～</a></p>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

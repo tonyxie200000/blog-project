@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}注册{% endblock %}
+{% block content %}
+    <h2 style="margin-bottom: 1.5rem;">用户注册</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username.errors }}
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email.errors }}
+            {{ form.email }}
+        </div>
+        <div class="form-group">
+            {{ form.password1.label_tag }}
+            {{ form.password1.errors }}
+            {{ form.password1 }}
+        </div>
+        <div class="form-group">
+            {{ form.password2.label_tag }}
+            {{ form.password2.errors }}
+            {{ form.password2 }}
+        </div>
+        <button type="submit" class="btn btn-primary">注册</button>
+    </form>
+    <p style="margin-top: 1rem;">
+        已有账号？<a href="{% url 'account:login' %}">立即登录</a>
+    </p>
+{% endblock %}

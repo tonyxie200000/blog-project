@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}{{ room.name }} - 聊天房间{% endblock %}
+{% block extra_css %}
+<style>
+  .chat-container {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .chat-header {
+    padding: 1rem;
+    background-color: #0d6efd;
+    color: white;
+    border-bottom: 1px solid #e9ecef;
+  }
+  .chat-messages {
+	width: 100%
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+  }
+  .message {
+    margin-bottom: 1rem;
+    max-width: 70%;
+    width: fit_content;
+    display: inline-block;  /* 脱离块级布局，不占满行 */
+
+  }
+  /* 消息行容器：强制占满一行，清除浮动 */
+.message-row {
+    width: 100%;
+    display: block;
+    clear: both;  /* 强制每个消息行占一行 */
+    margin-bottom: 0.5rem;  /* 行与行之间的间距 */
+}
+  .message.self {
+	  float: right;
+  }
+  .message-content {
+    padding: 0.8rem 1.2rem;
+    border: 1px;
+    border-radius: 18px;
+    word-wrap: break-word;
+  }
+  .message.other {
+    float: left;  /* 新增：对方消息左浮动 */
+}
+  .message.other .message-content {
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 18px 18px 18px 0;
+  }
+  .message.self .message-content {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 18px 18px 0 18px;
+  }
+  .message-meta {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+  }
+  .chat-input {
+    padding: 1rem;
+    border-top: 1px solid #e9ecef;
+    background-color: white;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="chat-container">
+    <!-- 聊天头部 -->
+    <div class="chat-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">{{ room.name }}</h5>
+      <a href="{% url 'chat:index' %}" class="btn btn-sm btn-light">返回列表</a>
+    </div>
+
+    <!-- 消息列表 -->
+    <div class="chat-messages" id="messages-container">
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="message-row"> <!-- 每条消息单独一行 -->
+        <div class="message {% if msg.sender == user %}self{% else %}other{% endif %}">
+            <div class="message-content">
+                {{ msg.content }}
+            </div>
+            <div class="message-meta">
+                {{ msg.sender.username }} · {{ msg.created_at|date:"H:i" }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+      {% else %}
+        <div class="text-center text-muted mt-5">
+          <i class="fa fa-comment-o fa-3x mb-2"></i>
+          <p>暂无消息，发送第一条消息吧～</p>
+        </div>
+      {% endif %}
+    </div>
+        <script>
+// 找到消息容器
+const messagesContainer = document.getElementById('messages-container');
+// 每次页面加载/消息更新时，滚动到容器底部
+function scrollToBottom() {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+// 页面加载完成后执行
+window.onload = scrollToBottom;
+// 若有实时消息推送，在消息添加后调用scrollToBottom()
+</script>
+    <!-- 消息输入框 -->
+    <div class="chat-input">
+      <form method="post" class="d-flex gap-2">
+        {% csrf_token %}
+        {{ form.content }}
+        <button type="submit" class="btn btn-primary">发送</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 自动滚动到底部 -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('messages-container');
+    container.scrollTop = container.scrollHeight;
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ target_user.username }} 的个人资料</h2>
+        </div>
+        <div class="card-body">
+            <p class="card-text">昵称：{{ profile.nickname|default:"未设置" }}</p>
+            <p class="card-text">简介：{{ profile.bio|default:"未设置" }}</p>
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="头像" style="width: 100px; border-radius: 50%;">
+            {% endif %}
+            <!-- 可添加该用户发布的文章列表 -->
+            <h5 class="mt-4">{{ target_user.username }} 发布的文章</h5>
+            {% for post in target_user.post_set.all %}
+                <div class="mt-2">
+                    <a href="{% url 'post:post_detail' post.id %}">{{ post.title }}</a>
+                </div>
+            {% empty %}
+                <p>暂无文章</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

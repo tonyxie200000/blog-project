@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>我发布的文章</h2>
+    {% if posts %}
+        {% for post in posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.content|truncatechars:100 }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">发布时间: {{ post.created_at }}</small>
+                    </p>
+                    <a href="{% url 'post:post_detail' post.id %}" class="btn btn-primary">查看全文</a>
+      			
+		    <!-- 新增分享按钮 -->
+      <button onclick="sharePost('{% url 'post:post_detail' post.id %}', '{{ post.title }}')" class="btn btn-secondary ml-2">分享</button>
+    </div>
+  </div>
+{% endfor %}
+
+<!-- 对应的分享JS -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+function sharePost(postUrl, postTitle) {
+  // 拼接完整URL（避免相对路径）
+  const fullUrl = window.location.origin + postUrl;
+  // 弹出分享选项（QQ/微信）
+  const choice = confirm(`选择分享方式：\n1. 点击确定 = QQ分享\n2. 点击取消 = 微信分享（生成二维码）`);
+  if (choice) {
+    // QQ分享
+    const qqShareUrl = `https://connect.qq.com/widget/shareqq/index.html?url=${encodeURIComponent(fullUrl)}&title=${encodeURIComponent(postTitle)}`;
+    window.open(qqShareUrl, '_blank', 'width=700,height=600');
+  } else {
+    // 微信二维码（可自定义弹窗显示）
+    const qrcode = prompt('微信分享二维码链接（复制到浏览器打开生成）：', fullUrl);
+    if (qrcode) {
+      alert('请将链接复制到二维码生成工具，扫码分享到微信！');
+    }
+  }
+}
+</script>
+
+		</div>
+            </div>
+
+    {% else %}
+        <p>你还没有发布任何文章哦~</p>
+    {% endif %}
+</div>
+{% endblock %}

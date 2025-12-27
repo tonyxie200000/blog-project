@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}编辑个人资料 - 我的网站{% endblock %}
+
+{% block extra_css %}
+<style>
+.edit-container {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+.edit-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 2rem;
+}
+
+.edit-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #888;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.avatar-info {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+}
+
+.btn-save {
+  background: #4ade80;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 25px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+  <div class="edit-card">
+    <h2 class="edit-title">编辑个人资料</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- 昵称（对应ProfileForm的nickname字段） -->
+      <div class="form-group">
+        <label for="{{ form.nickname.id_for_label }}">昵称</label>
+        {{ form.nickname }}
+      </div>
+
+      <!-- 头像（对应ProfileForm的avatar字段） -->
+      <div class="form-group">
+        <label>头像</label>
+        {% if form.instance.avatar %}
+          <div class="avatar-info">
+            当前: <a href="{{ form.instance.avatar.url }}" target="_blank">查看头像</a>
+          </div>
+        {% endif %}
+        {{ form.avatar }}
+      </div>
+
+      <!-- 个人简介（对应ProfileForm的bio字段） -->
+      <div class="form-group">
+        <label for="{{ form.bio.id_for_label }}">个人简介</label>
+        {{ form.bio }}
+      </div>
+
+      <!-- 保存按钮 -->
+      <button type="submit" class="btn-save">保存</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

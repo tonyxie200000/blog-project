@@ -1,0 +1,17 @@
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">文章分类</h5>
+    </div>
+    <div class="list-group list-group-flush">
+        <!-- 综合分类（显示所有文章） -->
+        <a href="{% url 'post:index' %}" class="list-group-item list-group-item-action">
+            综合
+        </a>
+        <!-- 循环显示数据库中的分类 -->
+        {% for category in categories %}
+            <a href="{% url 'post:post_by_category' category.id %}" class="list-group-item list-group-item-action">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>

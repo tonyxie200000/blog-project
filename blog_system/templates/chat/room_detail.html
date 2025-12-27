@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}{{ room.name }} - 聊天房间{% endblock %}
+{% block extra_css %}
+<style>
+  .chat-container {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .chat-header {
+    padding: 15px;
+    background-color: #0d6efd;
+    color: white;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+  }
+  .message {
+    margin-bottom: 15px;
+    max-width: 70%;
+  }
+  .message-self {
+    margin-left: auto;
+  }
+  .message-content {
+    padding: 10px 15px;
+    border-radius: 18px;
+    word-wrap: break-word;
+  }
+  .message-other .message-content {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 18px 18px 18px 0;
+  }
+  .message-self .message-content {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 18px 18px 0 18px;
+  }
+  .message-meta {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 5px;
+  }
+  .chat-input {
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+    background-color: white;
+  }
+  .chat-input input {
+    border-radius: 25px;
+    padding: 10px 20px;
+  }
+  .chat-input button {
+    border-radius: 25px;
+    padding: 10px 25px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+  <!-- 聊天头部 -->
+  <div class="chat-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"><i class="fa fa-comments"></i> {{ room.name }}</h5>
+    <a href="{% url 'chat:room_list' %}" class="btn btn-sm btn-light">
+      <i class="fa fa-arrow-left"></i> 返回列表
+    </a>
+  </div>
+
+  <!-- 消息列表 -->
+  <div class="chat-messages" id="chatMessages">
+    {% for message in messages %}
+      <div class="message {% if message.sender == user %}message-self{% else %}message-other{% endif %}">
+        <div class="message-content">
+          {{ message.content }}
+        </div>
+        <div class="message-meta">
+          {{ message.sender.username }} · {{ message.created_at|date:"H:i" }}
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-center text-muted mt-5">
+        <i class="fa fa-comment-o fa-3x mb-2"></i>
+        <p>暂无消息，发送第一条消息吧～</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- 输入框 -->
+  <div class="chat-input">
+    <form id="messageForm" method="post" action="{% url 'chat:send_message' room.id %}">
+      {% csrf_token %}
+      <div class="input-group">
+        <input 
+          type="text" 
+          name="content" 
+          class="form-control" 
+          placeholder="输入消息并回车发送..." 
+          required
+          autocomplete="off"
+        >
+        <button type="submit" class="btn btn-primary ms-2">
+          <i class="fa fa-paper-plane"></i> 发送
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // 页面加载后滚动到消息底部
+  $(document).ready(function() {
+    const chatMessages = $('#chatMessages');
+    chatMessages.scrollTop(chatMessages[0].scrollHeight);
+
+    // 发送消息后自动滚动到底部
+    $('#messageForm').submit(function(e) {
+      setTimeout(() => {
+        chatMessages.scrollTop(chatMessages[0].scrollHeight);
+      }, 100);
+    });
+
+    // 实时刷新消息（可选：每隔5秒刷新一次）
+    setInterval(() => {
+      $.get(window.location.href, function(data) {
+        const newMessages = $(data).find('#chatMessages').html();
+        if (newMessages !== chatMessages.html()) {
+          chatMessages.html(newMessages);
+          chatMessages.scrollTop(chatMessages[0].scrollHeight);
+        }
+      });
+    }, 5000);
+  });
+</script>
+{% endblock %}
