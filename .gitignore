@@ -1,38 +1,25 @@
-# Python相关
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
+# Python虚拟环境
 venv/
-ENV/
-*.egg-info/
-.eggs/
-dist/
-build/
-develop-eggs/
-install-eggs/
-parts/
-sdist/
-var/
-wheels/
-*.egg
+env/
+.venv/
 
-# Django相关
+# 缓存和日志
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 *.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media/
-static/
-.coverage
-htmlcov/
 
-# 系统/编辑器相关
+# 系统文件
 .DS_Store
 .idea/
 .vscode/
-*.swp
-*.swo
-*~
+
+# 压缩包（避免再次提交）
+*.zip
+*.rar
+*.7z
+
+# 数据库文件
+*.db
+*.sqlite3
