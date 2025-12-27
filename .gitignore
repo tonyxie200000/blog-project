@@ -1,0 +1,38 @@
+# Python相关
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+develop-eggs/
+install-eggs/
+parts/
+sdist/
+var/
+wheels/
+*.egg
+
+# Django相关
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+static/
+.coverage
+htmlcov/
+
+# 系统/编辑器相关
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
